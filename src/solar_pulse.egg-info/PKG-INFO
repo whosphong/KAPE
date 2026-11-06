@@ -1,0 +1,23 @@
+Metadata-Version: 2.4
+Name: solar-pulse
+Version: 0.1.0
+Summary: Spherical Grid Adaptive Bandwidth Nadaraya-Watson Estimator for Space Plasma VDFs
+Author-email: Phong Ho <tph@ualberta.ca>
+License: MIT
+Project-URL: Repository, https://github.com/yourusername/SOLAR_PULSE.git
+Keywords: space-plasma,parker-solar-probe,vdf,nadaraya-watson,kernel-regression
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Programming Language :: Python :: 3
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.20.0
+Requires-Dist: scipy>=1.7.0
+Requires-Dist: pandas>=1.3.0
+Requires-Dist: scikit-learn>=1.0.0
+Requires-Dist: cdflib>=0.4.0
+Requires-Dist: matplotlib>=3.4.0
+Requires-Dist: tqdm>=4.60.0
+Dynamic: license-file
