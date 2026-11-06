@@ -3,13 +3,17 @@ import numpy as np
 
 
 def reshape_2d(X: np.ndarray) -> np.ndarray:
-  """Ensures input vectors are 2D column matrices."""
+  """ensures atleast 2D array is passed through NWE"""
   X = np.asarray(X, dtype=float)
-  return X[:, None] if X.ndim == 1 else X
+  if X.ndim == 1:
+    return X[:, None] # output shape (N, 1) if only 1 indep. variable passed through i.e. (N,)
+  else:
+    return X
 
 
 class NAE:
-  """Nadaraya-Watson Estimator with optional prior regularizer scale (Q0)."""
+  """Nadaraya-Watson Estimator (NWE) for a 3D dimensional space with a variable bandwidth vector h_vec and options for a soft zero prior regularizer outside of
+  data boundaries to tend towards 0."""
 
   def __init__(
       self, h_vec: np.ndarray, Q0: float | None = None

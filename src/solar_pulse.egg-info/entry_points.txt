@@ -1,2 +1,0 @@
-[console_scripts]
-solar-pulse = solar_pulse.cli:main

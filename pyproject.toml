@@ -3,18 +3,26 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "solar-pulse"
-version = "0.1.0"
-description = "Spherical Grid Adaptive Bandwidth Nadaraya-Watson Estimator for Space Plasma VDFs"
+name = "kape"
+version = "0.0.1"
+description = "Kernel Adaptive Plasma Estimator for 3D Velocity Distribution Functions of inner-heliosphere Solar Wind"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
     {name = "Phong Ho", email = "tph@ualberta.ca"}
 ]
-keywords = ["space-plasma", "parker-solar-probe", "vdf", "nadaraya-watson", "kernel-regression"]
+keywords = [
+    "space-plasma", 
+    "parker-solar-probe", 
+    "solar-orbiter",
+    "electrostatic-analyzers", 
+    "vdf", 
+    "nadaraya-watson", 
+    "kernel-regression"
+]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Physics",
     "Programming Language :: Python :: 3",
@@ -30,7 +38,10 @@ dependencies = [
 ]
 
 [project.scripts]
-solar-pulse = "solar_pulse.cli:main"
+kape = "kape.cli:main"
 
 [project.urls]
-Repository = "https://github.com/yourusername/SOLAR_PULSE.git"
+Repository = "https://github.com/whosphong/KAPE"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*$py.class
+
+
+*.egg-info/
+build/
+dist/
+.eggs/
+
+.DS_Store
+.vscode/
+.idea/
+
+
+output_test/
+*.log
