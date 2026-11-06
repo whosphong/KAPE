@@ -7,10 +7,10 @@
 > [!NOTE]
 > **Work in Progress (WIP):** **KAPE** is currently under active early development (`v0.0.1`). APIs, internal modules, and mathematical pipelines are undergoing frequent updates. Features and documentation will expand as validation against spacecraft datasets progresses.
 
+
 **KAPE** (*Kernel Adaptive Plasma Estimator*) is a nonparametric regression framework built on Nadaraya-Watson kernel regression, engineered specifically for the non-uniform sampling geometries of top-hat electrostatic analyzers (ESAs) aboard heliospheric spacecraft.
 
 By modeling sparse, discrete in-situ particle count observations, KAPE produces a continuous 3D reconstruction of particle velocity distribution functions (VDFs, $f(\mathbf{v})$) alongside key fluid and kinetic macroscopic moments.
-
 ---
 
 ## Key Features
