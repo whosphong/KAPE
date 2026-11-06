@@ -4,7 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Active Development](https://img.shields.io/badge/Status-Active%20Development-green.svg)]()
 
-
+> [!NOTE]
+> **Work in Progress (WIP):** **KAPE** is currently under active early development (`v0.0.1`). APIs, internal modules, and mathematical pipelines are undergoing frequent updates. Features and documentation will expand as validation against spacecraft datasets progresses.
 
 **KAPE** (*Kernel Adaptive Plasma Estimator*) is a nonparametric regression framework built on Nadaraya-Watson kernel regression, engineered specifically for the non-uniform sampling geometries of top-hat electrostatic analyzers (ESAs) aboard heliospheric spacecraft.
 
