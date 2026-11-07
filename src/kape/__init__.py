@@ -1,7 +1,7 @@
 """KAPE: Kernel Adaptive Plasma Estimator."""
 
 from .bandwidth import compute_bandwidth_from_array, opt_alph
-from .core import NAE, get_domain_bounds, in_spherical_domain
+from .core import KAPE, get_domain_bounds, in_spherical_domain
 from .moments import EV_TO_K, compute_moments
 from .plotting import (
     gyro_cont,
@@ -14,7 +14,7 @@ __version__ = "0.0.1"
 
 __all__ = [
     # Original KAPE algoritihm for actual "reconstruction" f(v) surface.
-    "NAE",
+    "KAPE",
     "compute_bandwidth_from_array",
     "opt_alph",
     "get_domain_bounds",

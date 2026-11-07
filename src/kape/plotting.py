@@ -162,11 +162,11 @@ def gyro_fhat_grid_spherical_domain(
       b_in = in_buffer[batch_idx]
       if np.any(b_in):
         y_pred[batch_idx[b_in]] = model.predict(
-            Xq_car[batch_idx[b_in]], use_prior=False
+            Xq_car[batch_idx[b_in]], prior=False
         )
       if np.any(~b_in):
         y_pred[batch_idx[~b_in]] = model.predict(
-            Xq_car[batch_idx[~b_in]], use_prior=True
+            Xq_car[batch_idx[~b_in]], prior=True
         )
 
   y_pred_3d = y_pred.reshape(n_perp, n_par, n_theta)

@@ -65,7 +65,7 @@ def compute_moments(
     for start in range(0, len(inside_idx), chunk_size):
       end = start + chunk_size
       batch = inside_idx[start:end]
-      fhat_flat[batch] = model.predict(X_grid[batch], use_prior=False)
+      fhat_flat[batch] = model.predict(X_grid[batch], prior=False)
 
   fhat_grid = fhat_flat.reshape(n_r, n_theta, n_phi)
   jacobian = (r_grid**2)[:, None, None] * cos_ph_3d
