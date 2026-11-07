@@ -57,36 +57,38 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ---
 
-## Development Roadmap & Status
+## Development Roadmap & Status for v1.0.0 release
 
 **Status Legend:**  
-🟩 **Completed** | 🟪 **Polishing [Studio Phase]** | 🟦 **In development [Blender Phase]** | 🟧 **Paused** | 🟥 **Not started**
+🟩 **Completed** | 🟥 **Not started** | 🟪 **Polishing** | 🟦 **In development** | 🟧 **Paused** 
 
 ---
 
 ### Core Estimator & Mathematics
-- 🟩 **Nadaraya-Watson Kernel Engine:** Core formulation for non-uniform sampling geometries.
-- 🟩 **Spherical Spatial Bandwidth Routine:** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
-- 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries.
-- 🟥 **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning.
+- 🟩 **Nadaraya-Watson Estimator:** Core formulation for non-parametric kernel regression on 3D velocity distribution data from ESA.
+- 🟩 **Spherical Spatial Adaptive Bandwidth, h, computation :** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
+- 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries using prior knowledge of "0" density in higher velocity regions.
+- 🟩 **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning for bandwidth scaling.
 
 ### Macroscopic Moments & Physics
 - 🟩 **Zeroth Moment Integration:** Particle number density ($n$).
 - 🟩 **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.
 - 🟩 **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.
-- 🟩 **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames.
+- 🟩 **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames via B vector.
 
 ### Visualization & Diagnostics
-- 🟩 **Discrete Data Scatter Rendering:** 3D phase-space count mapping.
-- 🟩 **2D Contour Slice Plots:** Interpolated velocity-space distribution cuts.
-- 🟩 **Continuous Gyro-Contour Visualization:** Smooth gyrotropic distribution slices in MFAC.
-- 🟪 **Diagnostic Plotting Suite:** Residual mapping and bandwidth ($h$) spatial distribution plots.
+- 🟩 **Discrete Data Scatter in ($v_\parallel$, $v_\perp$) :** Discrete data samples from ESA projected onto 2D plot via gyrotropic assumption.
+- 🟩 **Reconstructed Plasma VDF contours in ($v_\parallel$, $v_\perp$):** Contour plot of reconstructed 3D VDF of discrete data samples projected onto 2D plot via gyrotropic assumption.
+- 🟩 **Reconstructed Plasma VDF contours in ($v_\parallel$, $v_\perp$):** Continuous plot of reconstructed 3D VDF of discrete data samples projected onto 2D plot via gyrotropic assumption.
+- 🟪 **Plot Layout:** Plotting format outputs as .png/.svg/.pdf and labeling and visualization.
 
-### API & User Experience
-- 🟦 **Pluggable Bandwidth Interface:** Support passing pre-computed $h$ arrays or callable bandwidth functions (`h=func`).
-- 🟪 **Simplified High-Level Estimator:** Scikit-learn style API (`KAPE.fit()`, `KAPE.predict()`) to minimize boilerplate.
+### API / User Experience / Quality of Life
+- 🟦 **Automated Internal Bandwidth Engine:** Integrated spherical step bandwidth calculation ($h$) directly inside estimator logic, removing user pre-computation boilerplate.
+- 🟦 **Scikit-Learn Style High-Level API:** Intuitive `KAPE.fit()` and `KAPE.predict()` wrapper interface for general space plasma physics users.
+- 🟦 **PyPI Packaging & Distribution:** `pyproject.toml` configuration and build setup for standard `pip install kape` support.
+- 🟥 **Interactive Tutorials & Notebooks:** Google Colab / Jupyter example notebooks covering PSP SPAN-I CDF ingestion, VDF reconstruction, and moment evaluation.
 - 🟥 **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).
-- 🟥 **PyPI Package Release:** Distribution setup via `pyproject.toml` for simple `pip install kape`.
+- 🟥 **Repository Documentation & API Reference:** Online documentation, Sphinx/MkDocs build, usage guides, and repository contribution standards.
 
 ---
 
