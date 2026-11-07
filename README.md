@@ -57,52 +57,56 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ---
 
-## Development Roadmap & Status for v1.0.0 release
+## Development Roadmap & Status (v1.0.0 Release)
 
 > **Status Legend:**  
-> 🟩 **Completed** | 🟥 **Not started** | 🟪 **Polishing** | 🟦 **In development** | 🟧 **Paused** 
+> 🟩 **Completed** &nbsp;|&nbsp; 🟪 **Polishing** &nbsp;|&nbsp; 🟦 **In Development** &nbsp;|&nbsp; 🟧 **Paused** &nbsp;|&nbsp; 🟥 **Not Started**
 
 ---
 
-> ### Core Estimator & Mathematics
-> 🟩 **Nadaraya-Watson Estimator:** Core formulation for non-parametric kernel regression on 3D velocity distribution data from ESA.
-> 
-> 🟩 **Spherical Spatial Adaptive Bandwidth, h, computation :** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
-> 
-> 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries using prior knowledge of "0" density in higher velocity regions.
-> 
-> 🟩 **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning for bandwidth scaling.
-> 
-> ### Macroscopic Moments & Physics
-> 🟩 **Zeroth Moment Integration:** Particle number density ($n$).
-> 
-> 🟩 **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.
-> 
-> 🟩 **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.
-> 
-> 🟩 **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames via B vector.
-> 
-> ### Visualization & Diagnostics
-> 🟩 **Discrete Data Scatter in ($v_\parallel$, $v_\perp$) :** Discrete data samples from ESA projected onto 2D plot via gyrotropic assumption.
-> 
-> 🟩 **Reconstructed Plasma VDF contours in ($v_\parallel$, $v_\perp$):** Contour plot of reconstructed 3D VDF of discrete data samples projected onto 2D plot via gyrotropic assumption.
-> 
-> 🟩 **Reconstructed Plasma VDF contours in ($v_\parallel$, $v_\perp$):** Continuous plot of reconstructed 3D VDF of discrete data samples projected onto 2D plot via gyrotropic assumption.
-> 
-> 🟪 **Plot Layout:** Plotting format outputs as .png/.svg/.pdf and labeling and visualization.
-> 
-> ### API / User Experience / Quality of Life
-> 🟦 **Automated Internal Bandwidth Engine:** Integrated spherical step bandwidth calculation ($h$) directly inside estimator logic, removing user pre-computation boilerplate.
-> 
-> 🟦 **Scikit-Learn Style High-Level API:** Intuitive `KAPE.fit()` and `KAPE.predict()` wrapper interface for general space plasma physics users.
-> 
-> 🟦 **PyPI Packaging & Distribution:** `pyproject.toml` configuration and build setup for standard `pip install kape` support.
-> 
-> 🟥 **Interactive Tutorials & Notebooks:** Google Colab / Jupyter example notebooks covering PSP SPAN-I CDF ingestion, VDF reconstruction, and moment evaluation.
-> 
-> 🟥 **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).
-> 
-> 🟥 **Repository Documentation & API Reference:** Online documentation, Sphinx/MkDocs build, usage guides, and repository contribution standards.
+### 🧮 Core Estimator & Mathematics
+
+| Feature | Description | Status |
+| :--- | :--- | :---: |
+| **Nadaraya-Watson Estimator** | Core non-parametric kernel regression engine for 3D ESA VDF data | 🟩 |
+| **Spherical Spatial Bandwidth** | Physical nearest-neighbor step calculation ($r, \theta, \phi$) with underflow guards | 🟩 |
+| **Automated Cross-Validation** | $k$-fold and LOO optimization routines for hyperparameter tuning | 🟩 |
+| **Boundary Extrapolation Regularizer** | Penalized kernel routine using high-velocity zero-density priors | 🟦 |
+
+---
+
+### 🌌 Macroscopic Moments & Physics
+
+| Feature | Description | Status |
+| :--- | :--- | :---: |
+| **Zeroth Moment Integration** | Number density ($n$) integration ($\int f(\mathbf{v}) \, d^3v$) | 🟩 |
+| **First Moment Integration** | Bulk velocity vector ($\mathbf{u}$) and scalar flow speed | 🟩 |
+| **Second Moment Integration** | Parallel ($T_\parallel$) and perpendicular ($T_\perp$) thermal energy derivation | 🟩 |
+| **Coordinate Transformations** | Dynamic frame rotation between IAC and MFAC via local magnetic field $\mathbf{B}$ | 🟩 |
+
+---
+
+### 📊 Visualization & Diagnostics
+
+| Feature | Description | Status |
+| :--- | :--- | :---: |
+| **2D Discrete Scatter Mapping** | Discrete ESA count samples projected onto ($v_\parallel, v_\perp$) plane under gyrotropy | 🟩 |
+| **Reconstructed 2D VDF Contours** | Iso-density contour slice rendering of reconstructed 3D VDFs in ($v_\parallel, v_\perp$) | 🟩 |
+| **Continuous Gyrotropic Maps** | Continuous spatial density surface projections in ($v_\parallel, v_\perp$) space | 🟩 |
+| **Publication Plotting Layout** | Multi-format figure exporter (.png, .svg, .pdf) with standard styling | 🟪 |
+
+---
+
+### 🛠️ API, User Experience & Documentation
+
+| Feature | Description | Status |
+| :--- | :--- | :---: |
+| **Automated Internal Bandwidth Engine** | Internal calculation of $h$ inside `.fit()`, removing user boilerplate | 🟦 |
+| **Scikit-Learn Style High-Level API** | Intuitive `KAPE.fit()` and `KAPE.predict()` wrapper interface | 🟦 |
+| **PyPI Packaging & Distribution** | Standard `pyproject.toml` build setup for `pip install kape` | 🟦 |
+| **Interactive Tutorials & Notebooks** | Google Colab and Jupyter notebooks covering PSP SPAN-I workflow | 🟥 |
+| **Data Ingestion Helpers** | Direct loader utilities for NASA PSP SPAN-I (L2/L3) CDF files | 🟥 |
+| **Repository & API Reference** | Sphinx/MkDocs web documentation, usage guides, and contribution standards | 🟥 |
 
 ---
 
