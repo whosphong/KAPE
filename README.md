@@ -59,12 +59,12 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ## Development Roadmap & Status for v1.0.0 release
 
-**Status Legend:**  
-🟩 **Completed** | 🟥 **Not started** | 🟪 **Polishing** | 🟦 **In development** | 🟧 **Paused** 
+> **Status Legend:**  
+> 🟩 **Completed** | 🟥 **Not started** | 🟪 **Polishing** | 🟦 **In development** | 🟧 **Paused** 
 
 ---
 
-### Core Estimator & Mathematics
+> ### Core Estimator & Mathematics
 - 🟩 **Nadaraya-Watson Estimator:** Core formulation for non-parametric kernel regression on 3D velocity distribution data from ESA.
 - 🟩 **Spherical Spatial Adaptive Bandwidth, h, computation :** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
 - 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries using prior knowledge of "0" density in higher velocity regions.
