@@ -14,17 +14,20 @@ EV_TO_K = 11604.525  # eV to Kelvin
 def compute_moments(
     model,
     X: np.ndarray,
-    Q: np.ndarray,
-    buffer_r: float = 5.0,
-    buffer_angle_rad: float = np.radians(10.0),
+    Q: np.ndarray, # B ROTATION MATRIX
+    buffer_r: float = 5.0, # OPTIMAL DEFAULT FOUND
+    buffer_angle_rad: float = np.radians(10.0), # OPTIMAL DEFAULT FOUND
     n_r: int = 60,
     n_theta: int = 60,
     n_phi: int = 60,
-    chunk_size: int = 50000,
-) -> tuple[float, np.ndarray, np.ndarray, float, float]:
-  r_min, r_max, theta_min, theta_max, phi_min, phi_max = get_domain_bounds(
-      X, domain_mode="buffer", buffer_r=buffer_r, buffer_angle_rad=buffer_angle_rad
-  )
+    chunk_size: int = 50000) -> tuple[float, np.ndarray, np.ndarray, float, float]:
+
+    """
+    moment calculation function for KAPE. computes the density, bulk velocity, and parallel/perpendicular temperatures from the KAPE model.
+    Compute initially in spherical coordinates then transformed into cartesian coordinates using change of varible formula. outputs can be in either cartesian or field-aligned coordinates depending on the Q matrix provided. Q is the rotation matrix that transforms from cartesian to field-aligned coordinates.
+    """
+
+  r_min, r_max, theta_min, theta_max, phi_min, phi_max = get_domain_bounds(X, domain_mode="buffer", buffer_r=buffer_r, buffer_angle_rad=buffer_angle_rad)
 
   r_grid = np.linspace(r_min, r_max, n_r)
   theta_grid = np.linspace(theta_min, theta_max, n_theta)
@@ -33,30 +36,17 @@ def compute_moments(
   cos_th, sin_th = np.cos(theta_grid), np.sin(theta_grid)
   cos_ph, sin_ph = np.cos(phi_grid), np.sin(phi_grid)
 
-  r_3d = r_grid[:, None, None]
-  cos_th_3d, sin_th_3d = cos_th[None, :, None], sin_th[None, :, None]
-  cos_ph_3d, sin_ph_3d = cos_ph[None, None, :], sin_ph[None, None, :]
+  r_3d = r_grid[:, None, None] # 3D grid of r values for integration. shape (n_r, 1, 1)
+  cos_th_3d, sin_th_3d = cos_th[None, :, None], sin_th[None, :, None] # 3D grid of theta values for integration. shape (1, n_theta, 1)
+  cos_ph_3d, sin_ph_3d = cos_ph[None, None, :], sin_ph[None, None, :] # 3D grid of phi values for integration. shape (1, 1, n_phi)
 
-  vx_grid = r_3d * cos_ph_3d * cos_th_3d
-  vy_grid = r_3d * cos_ph_3d * sin_th_3d
-  vz_grid = np.broadcast_to(r_3d * sin_ph_3d, (n_r, n_theta, n_phi))
+  vx_grid = r_3d * cos_ph_3d * cos_th_3d # 3D grid of vx values for integration. shape (n_r, n_theta, n_phi)
+  vy_grid = r_3d * cos_ph_3d * sin_th_3d # 3D grid of vy values for integration. shape (n_r, n_theta, n_phi)
+  vz_grid = np.broadcast_to(r_3d * sin_ph_3d, (n_r, n_theta, n_phi)) # 3D grid of vz values for integration. shape (n_r, n_theta, n_phi)
 
-  X_grid = (
-      np.stack([vx_grid, vy_grid, vz_grid], axis=-1)
-      .reshape(-1, 3)
-      .astype(np.float32)
-  )
+  X_grid = (np.stack([vx_grid, vy_grid, vz_grid], axis=-1).reshape(-1, 3).astype(np.float32)) # MADE AN INTEGRATION GRID.
 
-  inside = in_spherical_domain(
-      X_grid,
-      r_min,
-      r_max,
-      theta_min,
-      theta_max,
-      phi_min,
-      phi_max,
-      domain_mode="buffer",
-  )
+  inside = in_spherical_domain(X_grid,r_min,r_max,theta_min,theta_max,phi_min,phi_max,domain_mode="buffer") # filter down integration grids
 
   fhat_flat = np.zeros(X_grid.shape[0], dtype=np.float32)
   inside_idx = np.flatnonzero(inside)
@@ -72,9 +62,7 @@ def compute_moments(
   fj = fhat_grid * jacobian
 
   # 1st Pass: Density & Bulk Velocity
-  integrands_1st = np.stack(
-      [fj, fj * vx_grid, fj * vy_grid, fj * vz_grid], axis=0
-  )
+  integrands_1st = np.stack([fj, fj * vx_grid, fj * vy_grid, fj * vz_grid], axis=0)
   i_phi = simpson(integrands_1st, x=phi_grid, axis=3)
   i_th = simpson(i_phi, x=theta_grid, axis=2)
   totals = simpson(i_th, x=r_grid, axis=1)
@@ -106,4 +94,9 @@ def compute_moments(
   T_par = T_FACTOR * (I_vpar2 * inv_n_raw)
   T_perp = 0.5 * T_FACTOR * (I_vperp2 * inv_n_raw)
 
+
+    # u_car = [vx, vy, vz] in cartesian coordinates
+    # u_fac = [vperp, vpar, vperp] in field aligned coordinates
+    # T_par = parallel temperature in Kelvin
+    # T_perp = perpendicular temperature in Kelvin
   return n_cm3, u_car, u_fac, T_par, T_perp

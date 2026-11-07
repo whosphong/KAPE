@@ -6,24 +6,35 @@ from .core import KAPE
 
 
 def compute_bandwidth_from_array(X: np.ndarray) -> np.ndarray:
+
+  """
+  Computes the bandwidth h for each point in X based on the maximum distance to its nearest neighbors in spherical coordinates.
+  this should not change in terms of x,y,z coordinates of an esa output.
+  """
+
   vx, vy, vz = X[:, 0], X[:, 1], X[:, 2]
 
+  # rounding because of intial transformation error from ESA data to cartesian into spherical coordinates.
+  
   r = np.sqrt(vx**2 + vy**2 + vz**2)
   theta = np.round(np.arctan2(vy, vx), 6)
   phi = np.round(
       np.arcsin(np.clip(vz / np.where(r == 0, 1.0, r), -1.0, 1.0)), 5
   )
 
+  # need unique values as computing euclidean distance between points in spherical coordinates, so need unique values to avoid duplicates.
+
   unique_theta = np.unique(theta)
   unique_phi = np.unique(phi)
 
-  N_th = len(unique_theta)
-  N_ph = len(unique_phi)
+  N_th = len(unique_theta) # should be 8
+  N_ph = len(unique_phi) # should be 8
 
-  th_idx_pts = np.searchsorted(unique_theta, theta)
+  th_idx_pts = np.searchsorted(unique_theta, theta) # points where sample points are located in the unique theta array the indexes they would live in
+                                                    # in the sorted unqiue theta array. find what value theta is closest to and return the index of that value in the unique theta array. this is used to find the neighbors of each point in the spherical domain.
   ph_idx_pts = np.searchsorted(unique_phi, phi)
 
-  th_all = np.repeat(unique_theta, N_ph)
+  th_all = np.repeat(unique_theta, N_ph) # create a grid of all possible theta and phi combinations in the spherical domain. this is used to compute the chord distance between points in the spherical domain.
   ph_all = np.tile(unique_phi, N_th)
 
   sin_ph_all = np.sin(ph_all)
@@ -70,6 +81,8 @@ def compute_bandwidth_from_array(X: np.ndarray) -> np.ndarray:
 
   return h
 
+
+
 def opt_alph(
     X: np.ndarray,
     y: np.ndarray,
@@ -79,13 +92,18 @@ def opt_alph(
     random_state: int = 42,
     show_progress: bool = True,
 ) -> tuple[float, dict[float, float], dict[float, float]]:
+
+  """
+  Simple Kfold cross validaition to find the optimal alpha for h = alpha * D
+  """
+
   X, y = np.asarray(X, dtype=float), np.asarray(y, dtype=float)
   if alphas is None: alphas = np.linspace(0.1, 2, 60)
 
   kf = KFold(n_splits=n_splits, shuffle=True, random_state=random_state)
   results_mean, results_std = {}, {}
 
-  alpha_iter = tqdm(alphas, desc="  └─ CV Alpha Optimization", leave=False, disable=not show_progress)
+  alpha_iter = tqdm(alphas, desc="k-CV Alpha Optimization", leave=False, disable=not show_progress)
 
   for alpha in alpha_iter:
     fold_mses = []

@@ -4,6 +4,7 @@ import numpy as np
 
 def reshape_2d(X: np.ndarray) -> np.ndarray:
   """ensures atleast 2D array is passed through NWE"""
+
   X = np.asarray(X, dtype=float)
   if X.ndim == 1:
     return X[:, None] # output shape (N, 1) if only 1 indep. variable passed through i.e. (N,)
@@ -12,9 +13,11 @@ def reshape_2d(X: np.ndarray) -> np.ndarray:
 
 
 class KAPE:
-    """Kernel Adaptive Plasma Estimator (KAPE) model for regression with allowed uniform bandwidth or adaptive bandwidth.
+    """
+    Kernel Adaptive Plasma Estimator (KAPE) model for regression with allowed uniform bandwidth or adaptive bandwidth.
     i am only taking in gaussian kernel can be edited wanted but speciifcally only gaussian for now. It is also assumed we had identiy matrix for the
-    bandwidth as opposed to a covariance matrix to simplify inversion matrix"""
+    bandwidth as opposed to a covariance matrix to simplify inversion matrix
+    """
 
     def __init__(
         self,
@@ -190,28 +193,43 @@ def get_domain_bounds(
     buffer_r: float = 5.0,
     buffer_angle_rad: float = np.radians(10.0),
 ) -> tuple[float, float, float, float, float, float]:
-  vx, vy, vz = X[:, 0], X[:, 1], X[:, 2]
-  r = np.sqrt(vx**2 + vy**2 + vz**2)
-  theta = np.arctan2(vy, vx)
-  phi = np.arcsin(np.clip(vz / np.where(r == 0, 1.0, r), -1.0, 1.0))
 
-  if domain_mode == "fov":
-    r_min, r_max = r.min(), r.max()
-    theta_min, theta_max = theta.min(), theta.max()
-    phi_min, phi_max = phi.min(), phi.max()
-  elif domain_mode == "buffer":
-    r_min = max(0.0, r.min() - buffer_r)
-    r_max = r.max() + buffer_r
-    theta_min = max(-np.pi, theta.min() - buffer_angle_rad)
-    theta_max = min(np.pi, theta.max() + buffer_angle_rad)
-    phi_min = max(-np.pi / 2, phi.min() - buffer_angle_rad)
-    phi_max = min(np.pi / 2, phi.max() + buffer_angle_rad)
-  else:  # 'full'
-    r_min, r_max = 0.0, r.max() * 1.5
-    theta_min, theta_max = -np.pi, np.pi
-    phi_min, phi_max = -np.pi / 2, np.pi / 2
+    """
+    Compute the domain bounds for the spherical domain based on the input data X and the specified domain mode. 
+    for plotting purposes of the model. This does not affect how the moments are being computed.
+    
+    output: gives the bounds in spherical coordinates and can be converted back if needed.
+    """
 
-  return r_min, r_max, theta_min, theta_max, phi_min, phi_max
+    vx, vy, vz = X[:, 0], X[:, 1], X[:, 2] # x,y,z velocity components
+
+    #spherical transformation from cartesian; need to round because of physical transformation from the actually 
+    #data into vx vy vz and then into a metaspherical coordinate
+
+    r = np.sqrt(vx**2 + vy**2 + vz**2)
+    theta = np.round(np.arctan2(vy, vx))
+    phi = np.round(np.arcsin(np.clip(vz / np.where(r == 0, 1.0, r), -1.0, 1.0)))
+
+    # domain types == ("fov", "buffer", "full")
+
+    if domain_mode not in ("fov", "buffer", "full"):
+        raise ValueError(f"Invalid domain_mode: {domain_mode}. Must be one of 'fov', 'buffer', or 'full'.")
+
+    if domain_mode == "fov":
+        return r.min(), r.max(), theta.min(), theta.max(), phi.min(), phi.max()
+
+    if domain_mode == "buffer":
+        return (
+            max(0.0, r.min() - buffer_r),
+            r.max() + buffer_r,
+            max(-np.pi, theta.min() - buffer_angle_rad),
+            min(np.pi, theta.max() + buffer_angle_rad),
+            max(-np.pi / 2, phi.min() - buffer_angle_rad),
+            min(np.pi / 2, phi.max() + buffer_angle_rad),
+        )
+
+    # else full domain (had to put a cap on r somewhere 1.5)
+    return 0.0, r.max() * 1.5, -np.pi, np.pi, -np.pi / 2, np.pi / 2
 
 
 def in_spherical_domain(
@@ -224,32 +242,29 @@ def in_spherical_domain(
     phi_max: float,
     domain_mode: str = "buffer",
 ) -> np.ndarray:
-  if domain_mode == "full":
-    return np.ones(len(Xq_car), dtype=bool)
+    """
+    A filter to see if values are in or outside of the data bounds == 1 if it is inside, == 0 if it is outisde or boolean true/false.
+    This is for plotting purposes and does not affect how the moments are being computed.
+    """
 
-  vx_, vy_, vz_ = Xq_car[:, 0], Xq_car[:, 1], Xq_car[:, 2]
-  r_q = np.sqrt(vx_**2 + vy_**2 + vz_**2)
+    if domain_mode == "full":
+        return np.ones(len(Xq_car), dtype=bool) # everything is inside so 1 for true.
 
-  valid_r = (r_q >= r_min) & (r_q <= r_max)
-  inside = np.zeros(len(Xq_car), dtype=bool)
-  if not np.any(valid_r):
-    return inside
+    vx, vy, vz = Xq_car[:, 0], Xq_car[:, 1], Xq_car[:, 2]
+    r = np.sqrt(vx**2 + vy**2 + vz**2)
 
-  vx_v, vy_v, vz_v, r_v = (
-      vx_[valid_r],
-      vy_[valid_r],
-      vz_[valid_r],
-      r_q[valid_r],
-  )
-  theta_q = np.arctan2(vy_v, vx_v)
-  phi_q = np.arcsin(np.clip(vz_v / np.maximum(r_v, 1e-12), -1.0, 1.0))
+    valid_r = (r >= r_min) & (r <= r_max) # boolean array for  r values within the r bounbds
+    inside = np.zeros(len(Xq_car), dtype=bool)
 
-  valid_angles = (
-      (theta_q >= theta_min)
-      & (theta_q <= theta_max)
-      & (phi_q >= phi_min)
-      & (phi_q <= phi_max)
-  )
+    if not np.any(valid_r): # if nothing in valid_r == true then nothing is inside
+        return inside
 
-  inside[valid_r] = valid_angles
-  return inside
+    vx_v, vy_v, vz_v, r_v = (vx[valid_r],vy[valid_r],vz[valid_r],r[valid_r]) # sample points where r is valid. only the indexs that are inside trhe bounds are taken.
+
+    theta = np.arctan2(vy_v, vx_v)
+    phi = np.arcsin(np.clip(vz_v / np.where(r_v == 0, 1.0, r_v), -1.0, 1.0))
+
+    valid_angles = ((theta >= theta_min) & (theta <= theta_max) & (phi >= phi_min)& (phi <= phi_max))
+
+    inside[valid_r] = valid_angles # change the valid r indexes to true or false depending on the validity of the angles. if the angles are valid then it is inside == true, if not then it is outside == false.
+    return inside # boolean array of true/false for each point in Xq_car, indicating whether it is inside the specified spherical domain.
