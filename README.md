@@ -16,12 +16,12 @@ By modeling sparse, discrete in-situ particle count observations, KAPE produces 
 
 ## Key Features
 
-* **Continuous 3D VDF Reconstruction:** Interpolates and reconstructs continuous phase space density $f(\mathbf{v})$ from discretized, sparse instrument counts without assuming an a priori distribution shape (e.g., Maxwellian or Bi-Maxwellian).
-* **Dual Coordinate Frameworks:** Native support for reconstruction, transformation, and evaluation across:
+- **Continuous 3D VDF Reconstruction:** Interpolates and reconstructs continuous phase space density $f(\mathbf{v})$ from discretized, sparse instrument counts without assuming an a priori distribution shape (e.g., Maxwellian or Bi-Maxwellian).
+- **Dual Coordinate Frameworks:** Native support for reconstruction, transformation, and evaluation across:
   * **IAC:** Instrument-Aligned Coordinates
   * **MFAC:** Magnetic Field-Aligned Coordinates (rotated relative to local vector $\mathbf{B}$)
-* **Automated Macroscopic Moments:** Calculates integrated fluid and kinetic parameters directly from reconstructed continuous distributions.
-* **Multi-Mission Architecture:** Built to accommodate specialized energy-angle bin matrices and field-of-view masks across modern space plasma instrumentation.
+- **Automated Macroscopic Moments:** Calculates integrated fluid and kinetic parameters directly from reconstructed continuous distributions.
+- **Multi-Mission Architecture:** Built to accommodate specialized energy-angle bin matrices and field-of-view masks across modern space plasma instrumentation.
 
 ---
 
@@ -51,12 +51,60 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ## Limitations
 
-In progress...
+- **Field-of-View (FOV) Boundaries:** Unsampled regions of velocity space located far beyond physical instrument FOV limits require penalty regularizers to prevent unphysical extrapolation.
+- **Computational Scaling:** Pairwise distance matrices for physical bandwidth step calculations scale quadratically ($\mathcal{O}(N^2)$) with particle bin count.
+- **Sparse Count Thresholding:** Reconstructions in low-count or high-energy tail regions depend on baseline noise suppression ($Q_0$) to maintain physical stability.
+
+---
+
+## Development Roadmap & Status (v1.0.0 Release)
+
+> **Status Legend:**  
+> 🟩 **Completed** &nbsp;|&nbsp; 🟪 **Polishing** &nbsp;|&nbsp; 🟦 **In Development** &nbsp;|&nbsp; 🟧 **Paused** &nbsp;|&nbsp; 🟥 **Not Started**
+
+---
+
+### Core Estimator & Mathematics
+
+> 🟩 **Nadaraya-Watson Estimator:** Core formulation for non-parametric kernel regression on 3D velocity distribution data from ESA.  
+> 🟩 **Spherical Spatial Adaptive Bandwidth ($h$):** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.  
+> 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries using prior knowledge of zero density in higher velocity regions.  
+> 🟩 **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning for bandwidth scaling.
+
+---
+
+### Macroscopic Moments & Physics
+
+> 🟩 **Zeroth Moment Integration:** Particle number density ($n$).  
+> 🟩 **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.  
+> 🟩 **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.  
+> 🟩 **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames via local magnetic field vector $\mathbf{B}$.
+
+---
+
+### Visualization & Diagnostics
+
+> 🟩 **Discrete Data Scatter in ($v_\parallel, v_\perp$):** Discrete data samples from ESA projected onto 2D plot via gyrotropic assumption.  
+> 🟩 **Reconstructed Plasma VDF Contours in ($v_\parallel, v_\perp$):** Iso-density contour plot of reconstructed 3D VDF projected onto 2D plot via gyrotropic assumption.  
+> 🟩 **Continuous Gyrotropic Surface in ($v_\parallel, v_\perp$):** Continuous color-density plot of reconstructed 3D VDF projected onto 2D plot via gyrotropic assumption.  
+> 🟪 **Plot Layout & Export:** Multi-format figure export (.png, .svg, .pdf) with publication-ready labeling and visualization styling.
+
+---
+
+### API / User Experience / Quality of Life
+
+> 🟦 **Automated Internal Bandwidth Engine:** Integrated spherical step bandwidth calculation ($h$) directly inside estimator logic, removing user pre-computation boilerplate.  
+> 🟦 **Scikit-Learn Style High-Level API:** Intuitive `KAPE.fit()` and `KAPE.predict()` wrapper interface for general space plasma physics users.  
+> 🟦 **PyPI Packaging & Distribution:** `pyproject.toml` configuration and build setup for standard `pip install kape` support.  
+> 🟥 **Interactive Tutorials & Notebooks:** Google Colab and Jupyter example notebooks covering PSP SPAN-I CDF ingestion, VDF reconstruction, and moment evaluation.  
+> 🟥 **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).  
+> 🟥 **Repository Documentation & API Reference:** Online documentation, Sphinx/MkDocs build, usage guides, and repository contribution standards.
 
 ---
 
 ## Installation
 
-In progress...
+Install the latest development version directly from GitHub:
 
----
+```bash
+pip install git+[https://github.com/phongth/kape.git](https://github.com/whosphong/kape.git)
