@@ -59,29 +59,34 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ## Development Roadmap & Status
 
+**Status Legend:**  
+🟩 **Completed** | 🟪 **Polishing [Studio Phase]** | 🟦 **In development [Blender Phase]** | 🟧 **Paused** | 🟥 **Not started**
+
+---
+
 ### Core Estimator & Mathematics
-- [x] **Nadaraya-Watson Kernel Engine:** Core formulation for non-uniform sampling geometries.
-- [x] **Spherical Spatial Bandwidth Routine:** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
-- [/] **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries.
-- [ ] **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning.
+- 🟩 **Nadaraya-Watson Kernel Engine:** Core formulation for non-uniform sampling geometries.
+- 🟩 **Spherical Spatial Bandwidth Routine:** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
+- 🟦 **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries.
+- 🟥 **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning.
 
 ### Macroscopic Moments & Physics
-- [x] **Zeroth Moment Integration:** Particle number density ($n$).
-- [x] **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.
-- [x] **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.
-- [x] **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames.
+- 🟩 **Zeroth Moment Integration:** Particle number density ($n$).
+- 🟩 **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.
+- 🟩 **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.
+- 🟩 **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames.
 
 ### Visualization & Diagnostics
-- [x] **Discrete Data Scatter Rendering:** 3D phase-space count mapping.
-- [x] **2D Contour Slice Plots:** Interpolated velocity-space distribution cuts.
-- [x] **Continuous Gyro-Contour Visualization:** Smooth gyrotropic distribution slices in MFAC.
-- [/] **Diagnostic Plotting Suite:** Residual mapping and bandwidth ($h$) spatial distribution plots.
+- 🟩 **Discrete Data Scatter Rendering:** 3D phase-space count mapping.
+- 🟩 **2D Contour Slice Plots:** Interpolated velocity-space distribution cuts.
+- 🟩 **Continuous Gyro-Contour Visualization:** Smooth gyrotropic distribution slices in MFAC.
+- 🟪 **Diagnostic Plotting Suite:** Residual mapping and bandwidth ($h$) spatial distribution plots.
 
 ### API & User Experience
-- [/] **Pluggable Bandwidth Interface:** Support passing pre-computed $h$ arrays or callable bandwidth functions (`h=func`).
-- [ ] **Simplified High-Level Estimator:** Scikit-learn style API (`KAPE.fit()`, `KAPE.predict()`) to minimize boilerplate.
-- [ ] **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).
-- [ ] **PyPI Package Release:** Distribution setup via `pyproject.toml` for simple `pip install kape`.
+- 🟦 **Pluggable Bandwidth Interface:** Support passing pre-computed $h$ arrays or callable bandwidth functions (`h=func`).
+- 🟪 **Simplified High-Level Estimator:** Scikit-learn style API (`KAPE.fit()`, `KAPE.predict()`) to minimize boilerplate.
+- 🟥 **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).
+- 🟥 **PyPI Package Release:** Distribution setup via `pyproject.toml` for simple `pip install kape`.
 
 ---
 
@@ -90,4 +95,4 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 Install the latest development version directly from GitHub:
 
 ```bash
-pip install git+[https://github.com/phongth/kape.git](https://github.com/phongth/kape.git)
+pip install git+[https://github.com/phongth/kape.git](https://github.com/whosphong/kape.git)
