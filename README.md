@@ -16,12 +16,12 @@ By modeling sparse, discrete in-situ particle count observations, KAPE produces 
 
 ## Key Features
 
-* **Continuous 3D VDF Reconstruction:** Interpolates and reconstructs continuous phase space density $f(\mathbf{v})$ from discretized, sparse instrument counts without assuming an a priori distribution shape (e.g., Maxwellian or Bi-Maxwellian).
-* **Dual Coordinate Frameworks:** Native support for reconstruction, transformation, and evaluation across:
+- **Continuous 3D VDF Reconstruction:** Interpolates and reconstructs continuous phase space density $f(\mathbf{v})$ from discretized, sparse instrument counts without assuming an a priori distribution shape (e.g., Maxwellian or Bi-Maxwellian).
+- **Dual Coordinate Frameworks:** Native support for reconstruction, transformation, and evaluation across:
   * **IAC:** Instrument-Aligned Coordinates
   * **MFAC:** Magnetic Field-Aligned Coordinates (rotated relative to local vector $\mathbf{B}$)
-* **Automated Macroscopic Moments:** Calculates integrated fluid and kinetic parameters directly from reconstructed continuous distributions.
-* **Multi-Mission Architecture:** Built to accommodate specialized energy-angle bin matrices and field-of-view masks across modern space plasma instrumentation.
+- **Automated Macroscopic Moments:** Calculates integrated fluid and kinetic parameters directly from reconstructed continuous distributions.
+- **Multi-Mission Architecture:** Built to accommodate specialized energy-angle bin matrices and field-of-view masks across modern space plasma instrumentation.
 
 ---
 
@@ -51,12 +51,43 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 
 ## Limitations
 
-In progress...
+- **Field-of-View (FOV) Boundaries:** Unsampled regions of velocity space located far beyond physical instrument FOV limits require penalty regularizers to prevent unphysical extrapolation.
+- **Computational Scaling:** Pairwise distance matrices for physical bandwidth step calculations scale quadratically ($\mathcal{O}(N^2)$) with particle bin count.
+- **Sparse Count Thresholding:** Reconstructions in low-count or high-energy tail regions depend on baseline noise suppression ($Q_0$) to maintain physical stability.
+
+---
+
+## Development Roadmap & Status
+
+### Core Estimator & Mathematics
+- [x] **Nadaraya-Watson Kernel Engine:** Core formulation for non-uniform sampling geometries.
+- [x] **Spherical Spatial Bandwidth Routine:** Physical nearest-neighbor step calculation ($r, \theta, \phi$) with float underflow guards.
+- [/] **Boundary Extrapolation Regularizer:** Penalized kernel routine to handle unsampled region extrapolation far from instrument boundaries.
+- [ ] **Automated Cross-Validation:** $k$-fold and leave-one-out optimization routines for hyperparameter tuning.
+
+### Macroscopic Moments & Physics
+- [x] **Zeroth Moment Integration:** Particle number density ($n$).
+- [x] **First Moment Integration:** Bulk velocity vector ($\mathbf{u}$) and scalar flow speed.
+- [x] **Second Moment Integration:** Parallel ($T_\parallel$) and perpendicular ($T_\perp$) temperatures.
+- [x] **Coordinate Transformations:** Dynamic rotation between IAC and MFAC frames.
+
+### Visualization & Diagnostics
+- [x] **Discrete Data Scatter Rendering:** 3D phase-space count mapping.
+- [x] **2D Contour Slice Plots:** Interpolated velocity-space distribution cuts.
+- [x] **Continuous Gyro-Contour Visualization:** Smooth gyrotropic distribution slices in MFAC.
+- [/] **Diagnostic Plotting Suite:** Residual mapping and bandwidth ($h$) spatial distribution plots.
+
+### API & User Experience
+- [/] **Pluggable Bandwidth Interface:** Support passing pre-computed $h$ arrays or callable bandwidth functions (`h=func`).
+- [ ] **Simplified High-Level Estimator:** Scikit-learn style API (`KAPE.fit()`, `KAPE.predict()`) to minimize boilerplate.
+- [ ] **Data Ingestion Helpers:** Direct loader utilities for NASA CDF files (PSP SPAN-I L2/L3).
+- [ ] **PyPI Package Release:** Distribution setup via `pyproject.toml` for simple `pip install kape`.
 
 ---
 
 ## Installation
 
-In progress...
+Install the latest development version directly from GitHub:
 
----
+```bash
+pip install git+[https://github.com/phongth/kape.git](https://github.com/phongth/kape.git)
