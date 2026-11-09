@@ -1,5 +1,5 @@
 # KAPE: Kernel Adaptive Plasma Estimator v0.0.1 (WIP)
-### Authors: Phong T. Ho, Abby Azari, Jay Newby, Nidhi Hegde
+### Authors: Phong T. Ho | Co-authors: Abby Azari, Jay Newby, Nidhi Hegde
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
