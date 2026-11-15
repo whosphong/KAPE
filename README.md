@@ -48,6 +48,12 @@ KAPE integrates the reconstructed 3D distribution $f(\mathbf{v})$ to derive stan
 | **Parallel Temperature** | $T_\parallel$ | $\text{eV}$ / $\text{K}$ | Thermal energy parallel to local magnetic field $\mathbf{B}$ |
 | **Perpendicular Temperature**| $T_\perp$ | $\text{eV}$ / $\text{K}$ | Thermal energy perpendicular to local magnetic field $\mathbf{B}$ |
 
+## Reconstruction Example
+
+Reconstruction example of VDF snapshot data taken on 2022-09-04 compared against standard parametric Bi-Maxwellian and Bi-Kappa distributions.
+
+<img width="6632" height="4319" alt="image" src="https://github.com/user-attachments/assets/58b495a8-7a14-43fa-a80c-d26dd9fbb29b" />
+
 ---
 
 ## Limitations
